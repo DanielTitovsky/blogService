@@ -18,15 +18,21 @@ type ArticleService interface {
 	UpdateArticle(ctx context.Context, article article_usecases.ArticleService) (*domain.Article, error)
 }
 
-type ArticleRouter struct {
-	services  ArticleService
-	validator *validator.Validate
+type AuthClient interface {
+	ValidateToken(ctx context.Context, tokenString string) (uuid.UUID, error)
 }
 
-func NewArticleRouters(services ArticleService, validator *validator.Validate) ArticleRouter {
+type ArticleRouter struct {
+	services   ArticleService
+	authClient AuthClient
+	validator  *validator.Validate
+}
+
+func NewArticleRouters(services ArticleService, validator *validator.Validate, authClietn AuthClient) ArticleRouter {
 	return ArticleRouter{
-		services:  services,
-		validator: validator,
+		services:   services,
+		validator:  validator,
+		authClient: authClietn,
 	}
 }
 
